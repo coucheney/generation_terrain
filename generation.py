@@ -5,6 +5,7 @@
 # import des librairies
 
 import tkinter as tk
+import random as rd
 
 
 ########################
@@ -21,6 +22,19 @@ N = 3
 # probabilité d'être un mur à l'initialisation:
 P = 0.5
 
+# choix des couleurs
+
+COUL_MUR = "grey"
+COUL_LIBRE = "white"
+
+
+############################
+# variables globales
+terrain = []
+grille = []
+
+
+
 
 ####################
 # fonctions
@@ -35,10 +49,29 @@ def init_terrain():
     du carré dessiné sur le canevas 
     * Une case est un mur avec probabilité P
     """
-    grille = []
+    global grille, terrain
     for i in range(N):
         grille.append([0]*N)
-    print(grille)
+        terrain.append([0]*N)
+
+    for i in range(N):
+        for j in range(N):
+            if rd.uniform(0, 1) < P:
+                terrain[i][j] = 1
+                coul = COUL_MUR
+            else:
+                terrain[i][j] = 0
+                coul = COUL_LIBRE
+            largeur = LARGEUR // N
+            hauteur = HAUTEUR // N
+            x1 = largeur * i
+            y1 = hauteur * j
+            x2 = largeur * (i+1)
+            y2 = hauteur * (j + 1)
+            carre = canvas.create_rectangle((x1, y1), (x2, y2), fill=coul)
+            grille[i][j] = carre
+        
+
 
 
 
