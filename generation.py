@@ -73,8 +73,20 @@ def init_terrain():
         
 
 
+def sauvegarde():
+    """Ecrit la taille de la grille et les valeurs de la variable
+     terrain das le fichier sauvegarde.txt
+     """
+    fic = open("sauvegarde.txt", "w")
+    fic.write(str(N) + "\n")
+    for i in range(N):
+        for j in range(N):
+            fic.write(str(terrain[i][j]) + "\n")
+    fic.close()
 
 
+def load():
+    pass
 
 #########################
 # partie principale
@@ -83,10 +95,14 @@ def init_terrain():
 racine = tk.Tk()
 racine.title("Génération de terrain")
 canvas = tk.Canvas(racine, height=HAUTEUR, width=LARGEUR)
+bouton_sauvegarde = tk.Button(racine, text="Sauvegarde", command=sauvegarde)
+bouton_load = tk.Button(racine, text="Charger terrain", command=load)
+
 
 # placement des widgets
-canvas.grid(column=1, row=0)
-
+canvas.grid(column=1, row=0, rowspan=10)
+bouton_sauvegarde.grid(row=0)
+bouton_load.grid(row=1)
 
 init_terrain()
 
