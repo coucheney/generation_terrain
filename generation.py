@@ -50,6 +50,8 @@ def init_terrain():
     * Une case est un mur avec probabilité P
     """
     global grille, terrain
+    grille = []
+    terrain = []
     for i in range(N):
         grille.append([0]*N)
         terrain.append([0]*N)
@@ -71,6 +73,15 @@ def init_terrain():
             carre = canvas.create_rectangle((x1, y1), (x2, y2), fill=coul)
             grille[i][j] = carre
         
+def affiche_terrain():
+    """ Affiche le terrain sur le canvas"""
+    for i in range(N):
+        for j in range(N):
+            if terrain[i][j] == 0:
+                coul = COUL_LIBRE
+            else:
+                coul = COUL_MUR
+            canvas.itemconfigure(grille[i][j], fill=coul)
 
 
 def sauvegarde():
@@ -86,7 +97,29 @@ def sauvegarde():
 
 
 def load():
-    pass
+    """
+    Lire le fichier sauvegarde.txt et affiche dans le canvas le terrain lu
+    """
+    global N
+    fic = open("sauvegarde.txt", "r")
+    taille = fic.readline()
+    N = int(taille)
+    canvas.delete()
+    # initialisation pour avoir des listes à la bonne taille
+    init_terrain()
+    print(terrain)
+    i = j = 0
+    for ligne in fic:
+        terrain[i][j] = int(ligne)
+        j += 1
+        if j == N:
+            j = 0
+            i += 1
+    print(terrain)
+    affiche_terrain()
+    fic.close()
+
+
 
 #########################
 # partie principale
