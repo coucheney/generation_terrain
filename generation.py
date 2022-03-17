@@ -16,11 +16,17 @@ HAUTEUR = 600
 # largeur du canevas
 LARGEUR = 600
 # taille de la grille
-N = 3
+N = 10
 
 # paramètres de l'automate:
 # probabilité d'être un mur à l'initialisation:
 P = 0.5
+# nombre d'itérations de l'automate
+N_ITER = 1
+# valeur seuil à parti de laquelle une case devient un mur
+SEUIL = 4
+# distance du voisinage considéré
+D = 1
 
 # choix des couleurs
 
@@ -120,6 +126,58 @@ def load():
     fic.close()
 
 
+def cpt_murs(i, j, d):
+    """Retourne le nombre de murs voisins de la case
+     de coordonnées (i,j) à distance au plus d"""
+    cpt = 0
+    delta_i = 0
+    if i + d + 1 >= N:
+        delta_i = N
+    for k in range(i - d - delta_i, i + d + 1 - delta_i):
+        delta_j = 0
+        if j + d + 1 >= N:
+            delta_j = N
+        for l in range(j - d - delta_j, j + d + 1 - delta_j):
+            # si il y a un mur à la case de coordonnées (k, l)
+            if terrain[k][l] == 1:
+                cpt += 1
+    if terrain[i][j] == 1:
+        cpt -= 1
+    return cpt
+
+def etape():
+    """Fait une étape de l'automate"""
+    global terrain
+    terrain_res = []
+    for i in range(N):
+        terrain_res.append([0]*N)
+    for i in range(N):
+        for j in range(N):
+            nb_murs = cpt_murs(i, j, D)
+            if nb_murs > SEUIL:
+                terrain_res[i][j] = 1
+    terrain = terrain_res
+    affiche_terrain()
+
+
+
+
+def genere():
+    """Fonction qui génère le terrain en suivant les régles de l'automate"""
+    for i in range(N_ITER):
+        etape()    
+
+
+def compte_mur(event):
+    """fonction qui donne le nombre de murs voisins de la case cliquée"""
+    x = event.x
+    y = event.y
+    largeur = LARGEUR // N
+    hauteur = HAUTEUR // N
+    i = x // largeur
+    j = y // hauteur
+    murs = cpt_murs(i, j, D)
+    print(i, j, murs)
 
 #########################
 # partie principale
@@ -130,14 +188,19 @@ racine.title("Génération de terrain")
 canvas = tk.Canvas(racine, height=HAUTEUR, width=LARGEUR)
 bouton_sauvegarde = tk.Button(racine, text="Sauvegarde", command=sauvegarde)
 bouton_load = tk.Button(racine, text="Charger terrain", command=load)
-
+bouton_genere = tk.Button(racine, text="genere terrain", command=genere)
 
 # placement des widgets
 canvas.grid(column=1, row=0, rowspan=10)
 bouton_sauvegarde.grid(row=0)
 bouton_load.grid(row=1)
+bouton_genere.grid(row=2)
 
 init_terrain()
+
+# pour tester la fonction qui compte le nombre de murs
+canvas.bind("<Button-1>", compte_mur)
+
 
 # boucle principale
 racine.mainloop()
